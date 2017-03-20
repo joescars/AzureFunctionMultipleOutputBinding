@@ -7,7 +7,7 @@ The output (number of faces) is written as a message to an [Azure Storage Queue]
 In addition, the result is archived in  in [Azure Table Storage](https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-how-to-use-tables)
 
 ## Resources
-- [Azure Functions] (https://azure.microsoft.com/en-us/services/functions/
+- [Azure Functions](https://azure.microsoft.com/en-us/services/functions/
 )
 - [Azure Functions Documentation](https://docs.microsoft.com/en-us/azure/azure-functions/)
 - Contact me [@joescars](https://twitter.com/joescars)
