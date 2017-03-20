@@ -1,0 +1,24 @@
+{
+  "bindings": [
+    {
+      "type": "manualTrigger",
+      "direction": "in",
+      "name": "input"
+    },
+    {
+      "type": "queue",
+      "name": "outputQueueItem",
+      "queueName": "outqueue",
+      "connection": "AzureWebJobsDashboard",
+      "direction": "out"
+    },
+    {
+      "type": "table",
+      "name": "outputTable",
+      "tableName": "outTable",
+      "connection": "AzureWebJobsDashboard",
+      "direction": "out"
+    }
+  ],
+  "disabled": false
+}
