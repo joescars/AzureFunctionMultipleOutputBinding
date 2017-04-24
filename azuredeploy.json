@@ -25,6 +25,7 @@
   },
   "variables": {
     "lowerSiteName": "[toLower(parameters('appName'))]",
+    "contentShareName": "[variables('lowerSiteName')]",
     "storageName": "[concat('function', uniqueString(variables('lowerSiteName')))]",
     "storageQueueOut": "outQueue",
     "storageTableOut": "outTable",
@@ -55,6 +56,10 @@
             {
               "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
               "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[variables('contentShareName')]"
             },
             {
               "name": "ROUTING_EXTENSION_VERSION",
@@ -112,3 +117,4 @@
   ],
   "outputs": {}
 }
+
