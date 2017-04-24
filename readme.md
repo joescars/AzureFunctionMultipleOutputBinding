@@ -1,5 +1,7 @@
 # Azure Function with Multiple Output Bindings
 
+[![Deploy to Azure](http://azuredeploy.net/deploybutton.png)](https://azuredeploy.net/)
+
 This example `Manual Trigger` function simulates getting a result and then storing it to Azure Table Storage and Azure Storage Queue using built in output bindings. 
 
 The output (number of faces) is written as a message to an [Azure Storage Queue](https://docs.microsoft.com/en-us/azure/storage/storage-dotnet-how-to-use-queues). 

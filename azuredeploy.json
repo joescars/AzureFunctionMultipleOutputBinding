@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the function app to create."
+      }
+    },
+    "siteLocation": {
+      "type": "string",
+      "allowedValues": [
+        "Brazil South",
+        "East US",
+        "East US 2",
+        "Central US",
+        "North Central US",
+        "South Central US",
+        "West US",
+        "West US 2"
+      ],
+      "defaultValue": "[resourceGroup().location]"
+    }
+  },
+  "variables": {
+    "lowerSiteName": "[toLower(parameters('appName'))]",
+    "storageName": "[concat('function', uniqueString(variables('lowerSiteName')))]",
+    "storageQueueOut": "outQueue",
+    "storageTableOut": "outTable",
+    "repoUrl": "https://github.com/joescars/AzureFunctionMultipleOutputBinding",
+    "branch": "master"
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-03-01",
+      "name": "[variables('lowerSiteName')]",
+      "type": "Microsoft.Web/sites",
+      "properties": {
+        "name": "[variables('lowerSiteName')]",
+        "siteConfig": {
+          "appSettings": [
+            {
+              "name": "AzureWebJobsDashboard",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~1"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=',variables('storageName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageName')), '2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "ROUTING_EXTENSION_VERSION",
+              "value": "~0.2"
+            }
+          ]
+        },
+        "clientAffinityEnabled": false
+      },
+      "resources": [
+        {
+          "apiVersion": "2015-08-01",
+          "name": "web",
+          "type": "sourcecontrols",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/Sites', variables('lowerSiteName'))]"
+          ],
+          "properties": {
+            "RepoUrl": "[variables('repoURL')]",
+            "branch": "[variables('branch')]",
+            "IsManualIntegration": true
+          }
+        }
+      ],
+      "dependsOn": [
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('storageName'))]"
+      ],
+      "location": "[parameters('siteLocation')]",
+      "kind": "functionapp"
+    },
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('storageName')]",
+      "location": "[parameters('siteLocation')]",
+      "properties": {
+        "accountType": "Standard_LRS"
+      },
+      "resources": [
+        {
+          "type": "Microsoft.Storage/storageAccounts/providers/locks",
+          "name": "[concat(variables('storageName'), '/Microsoft.Authorization/', variables('storageName'))]",
+          "apiVersion": "2015-01-01",
+          "dependsOn": [
+            "[concat('Microsoft.Storage/storageAccounts/', variables('storageName'))]"
+          ],
+          "properties": {
+            "level": "CannotDelete",
+            "notes": "One or more function apps were linked to this storage account. You can see all the function apps linked to the account under 'files' or 'shares'."
+          }
+        }
+      ]
+    }
+
+  ],
+  "outputs": {}
+}
